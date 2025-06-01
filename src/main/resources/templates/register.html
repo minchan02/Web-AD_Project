@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Sign Up</title></head>
+<body>
+<h1>Sign Up</h1>
+<form th:action="@{/auth/register}" method="post">
+  <label>ID <input name="username"></label><br>
+  <label>PW <input type="password" name="password"></label><br>
+  <button type="submit">Register</button>
+</form>
+<a th:href="@{/login}">이미 계정이 있나요? 로그인</a>
+</body>
+</html>
