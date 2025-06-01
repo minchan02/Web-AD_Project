@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.Authentication;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -35,8 +36,8 @@ public class BoardController {
     @PostMapping
     public String create(@RequestParam String title,
                          @RequestParam String content,
-                         @RequestParam MultipartFile file) throws IOException {
-        service.save(title, content, file);
+                         @RequestParam MultipartFile file, Authentication auth) throws IOException {
+        service.save(title, content, file, auth);
         return "redirect:/board";
     }
 

@@ -1,14 +1,13 @@
+// src/main/java/org/example/sprinweb/controller/BoardApiController.java
 package org.example.sprinweb.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.example.sprinweb.board.Board;
-import org.example.sprinweb.board.BoardRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.example.sprinweb.board.*;
+import org.springframework.web.bind.annotation.*;
 
-@RestController          // JSON 전용
+@RestController
 @RequiredArgsConstructor
 public class BoardApiController {
 
@@ -16,6 +15,12 @@ public class BoardApiController {
 
     @GetMapping("/api/list")
     public List<Board> list() {
-        return repo.findAll();   // => JSON 배열
+        return repo.findAll();
+    }
+
+    @PostMapping("/api/find")
+    public List<Board> find(@RequestBody Map<String,String> body) {
+        String username = body.get("username");
+        return repo.findByWriterName(username);
     }
 }

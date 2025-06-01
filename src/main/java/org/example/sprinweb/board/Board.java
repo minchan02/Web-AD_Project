@@ -12,10 +12,12 @@ public class Board {
 
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "text")
     private String content;
 
     private String storedName;
 
     private String originalName;
+
+    private String writerName;
 }

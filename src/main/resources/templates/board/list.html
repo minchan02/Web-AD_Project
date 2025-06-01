@@ -1,33 +1,53 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><title>Board</title></head>
 <body>
 <h1>Board</h1>
 <a href="/board/new">글쓰기</a>
 
+<form id="search">
+    <input name="username" placeholder="작성자 아이디">
+    <button>Search</button>
+    <button type="button" onclick="loadAll()">All</button>
+</form>
+
 <table id="tbl" border="1">
-    <thead>
-    <tr><th>ID</th><th>Title</th><th>File</th></tr>
-    </thead>
+    <thead><tr><th>ID</th><th>Title</th><th>Writer</th><th>File</th></tr></thead>
     <tbody></tbody>
 </table>
 
 <script>
-    async function load() {
-        const res = await fetch('/api/list');
-        const list = await res.json();          // [{id, title, originalName, …}, …]
-        const tbody = document.querySelector('#tbl tbody');
-        tbody.innerHTML = '';                   // 초기화
-        list.forEach(b => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-      <td>${b.id}</td>
-      <td>${b.title}</td>
-      <td>${b.originalName ? `<a href="/board/file/${b.id}">${b.originalName}</a>` : ''}</td>`;
-            tbody.appendChild(tr);
+    async function render(list){
+        const tbody=document.querySelector('#tbl tbody'); tbody.innerHTML='';
+        list.forEach(b=>{
+            tbody.insertAdjacentHTML('beforeend',`
+      <tr>
+        <td>${b.id}</td>
+        <td>${b.title}</td>
+        <td>${b.writerName}</td>
+        <td>${b.originalName?`<a href="/board/file/${b.id}">${b.originalName}</a>`:''}</td>
+      </tr>`);
         });
     }
-    load();
+
+    /* 전체 글 */
+    async function loadAll(){
+        const res=await fetch('/api/list');         // GET
+        render(await res.json());
+    }
+
+    /* 이름으로 검색 */
+    document.getElementById('search').onsubmit=async e=>{
+        e.preventDefault();
+        const username=e.target.username.value.trim();
+        if(!username){ return loadAll(); }
+        const res=await fetch('/api/find',{         // POST
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({username})
+        });
+        render(await res.json());
+    };
+
+    loadAll();   // 최초 호출
 </script>
-</body>
-</html>
+</body></html>
