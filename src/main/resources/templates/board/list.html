@@ -1,8 +1,15 @@
-<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><title>Board</title></head>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Board</title>
+    <link th:href="@{/css/board.css}" rel="stylesheet">
+</head>
 <body>
 <h1>Board</h1>
 <a href="/board/new">글쓰기</a>
+
+<div id="msg" style="display:none;margin:12px 0;color:#e11d48;font-weight:600;"></div>
 
 <form id="search">
     <input name="username" placeholder="작성자 아이디">
@@ -16,38 +23,71 @@
 </table>
 
 <script>
-    async function render(list){
-        const tbody=document.querySelector('#tbl tbody'); tbody.innerHTML='';
+    function showMsg(txt){
+        const box = document.getElementById('msg');
+        box.textContent = txt;
+        box.style.display = txt ? 'block' : 'none';
+    }
+
+    async function fetchJson(url, opts){
+        const res = await fetch(url, opts);
+        if(!res.ok){
+            let msg = res.statusText;
+            try{
+                const err = await res.json();
+                msg = err.message || err.error || msg;
+            }catch(_){ /* pass */ }
+            throw new Error(msg);
+        }
+        return res.json();
+    }
+
+    function render(list){
+        const tbody = document.querySelector('#tbl tbody');
+        tbody.innerHTML = '';
         list.forEach(b=>{
             tbody.insertAdjacentHTML('beforeend',`
       <tr>
         <td>${b.id}</td>
         <td>${b.title}</td>
         <td>${b.writerName}</td>
-        <td>${b.originalName?`<a href="/board/file/${b.id}">${b.originalName}</a>`:''}</td>
+        <td>${b.originalName ? `<a href="/board/file/${b.id}">${b.originalName}</a>` : ''}</td>
       </tr>`);
         });
     }
 
-    /* 전체 글 */
     async function loadAll(){
-        const res=await fetch('/api/list');         // GET
-        render(await res.json());
+        try{
+            const data = await fetchJson('/api/list');
+            render(data);
+            showMsg('');
+        }catch(e){
+            showMsg(e.message);
+            alert(e.message);
+        }
     }
 
-    /* 이름으로 검색 */
-    document.getElementById('search').onsubmit=async e=>{
+    document.getElementById('search').onsubmit = async e=>{
         e.preventDefault();
-        const username=e.target.username.value.trim();
-        if(!username){ return loadAll(); }
-        const res=await fetch('/api/find',{         // POST
+        const username = e.target.username.value.trim();
+        const url  = username ? '/api/find' : '/api/list';
+        const opts = username ? {
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({username})
-        });
-        render(await res.json());
+        } : undefined;
+
+        try{
+            const data = await fetchJson(url, opts);
+            render(data);
+            showMsg('');
+        }catch(e){
+            showMsg(e.message);
+            alert(e.message);
+        }
     };
 
-    loadAll();   // 최초 호출
+    loadAll();
 </script>
-</body></html>
+</body>
+</html>

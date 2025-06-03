@@ -1,0 +1,79 @@
+/* ===== 기본 세팅 ===== */
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans KR",sans-serif;}
+body{background:#f7f9fc;color:#333;padding:40px;}
+h1{margin-bottom:20px;font-size:1.8rem;color:#374151;}
+
+a{color:#2563eb;text-decoration:none;}
+a:hover{text-decoration:underline}
+
+/* ===== 버튼 & 입력 ===== */
+button,
+input[type="text"],
+input[type="search"]{
+    border:1px solid #d1d5db;
+    border-radius:6px;
+    padding:6px 12px;
+    font-size:.9rem;
+}
+
+button{
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+    transition:.15s background;
+}
+button[type="button"]{          /* All 버튼은 회색 */
+    background:#6b7280;
+}
+button:hover{background:#1e40af;}
+button[type="button"]:hover{background:#4b5563;}
+
+form#search{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+}
+
+/* ===== 테이블 ===== */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+
+thead th{
+    background:#2563eb;
+    color:#fff;
+    padding:10px;
+    text-align:left;
+    font-weight:600;
+    font-size:.95rem;
+}
+
+tbody td{
+    padding:10px;
+    border-bottom:1px solid #e5e7eb;
+    font-size:.9rem;
+}
+
+tbody tr:nth-child(even){background:#f3f4f6;}
+tbody tr:hover{background:#e0f2fe;}
+
+/* ===== 반응형 ===== */
+@media(max-width:600px){
+    table, thead, tbody, th, td, tr{display:block;}
+    thead{display:none;}
+    tbody tr{margin-bottom:12px;border:1px solid #e5e7eb;border-radius:8px;}
+    tbody td{
+        padding:8px 10px;
+        border:none;
+        display:flex;
+        justify-content:space-between;
+    }
+    tbody td::before{
+        content:attr(data-label);
+        font-weight:600;
+        color:#4b5563;
+    }
+}
